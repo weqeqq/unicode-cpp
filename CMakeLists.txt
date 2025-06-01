@@ -1,38 +1,45 @@
 
 cmake_minimum_required(VERSION 3.23)
 
-project(unicode LANGUAGES CXX VERSION 0.1.0)
+project(unicode LANGUAGES CXX VERSION 0.2.0)
 
 add_library(unicode)
 add_library(unicode::unicode ALIAS unicode)
 
 include(FetchContent)
 
+option(UNICODE_USE_SIMDUTF "Use simdutf as unicode backend" ON)
+
 set(FETCHCONTENT_QUIET OFF)
+if(UNICODE_USE_SIMDUTF)
+  FetchContent_Declare(
+    simdutf-project
 
-FetchContent_Declare(
-  simdutf-project
-
-  GIT_REPOSITORY https://github.com/simdutf/simdutf
-  GIT_TAG 02111c468e44823cbfbfaba9cc2a48050dca57fa
-  GIT_PROGRESS ON
-  GIT_SHALLOW  ON
-)
+    GIT_REPOSITORY https://github.com/weqeqq/simdutf
+    GIT_TAG 3e9a394f6e71e835fb5f8eab90becc9f8a5be3e2
+    GIT_PROGRESS ON
+  )
+endif()
 FetchContent_Declare(
   exception-project
 
   GIT_REPOSITORY https://github.com/weqeqq/exception-cpp.git
   GIT_TAG 42843f32621a206b999bac52d25f6ca0d821f440
   GIT_PROGRESS ON
-  GIT_SHALLOW  ON
 )
 FetchContent_MakeAvailable(
-  simdutf-project
   exception-project
 )
+if (UNICODE_USE_SIMDUTF)
+  FetchContent_MakeAvailable(
+    simdutf-project
+  )
+  target_link_libraries(unicode 
+    PRIVATE 
+    simdutf::simdutf
+  )
+endif()
 target_link_libraries(unicode 
-  PRIVATE 
-  simdutf::simdutf
   PUBLIC
   exception::exception
 )
