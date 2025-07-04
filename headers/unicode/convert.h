@@ -108,7 +108,12 @@ BasicString<OutputChar> Convert(const BasicString<Char> &input) {
     return ToStringU32(input);
 
   } else {
-    static_assert(false, "Undefined character type");
+    static_assert(
+      std::is_same_v<OutputChar, Char8>  ||
+      std::is_same_v<OutputChar, Char16> ||
+      std::is_same_v<OutputChar, Char32>,
+      "Undefined character type"
+    );
   }
 }
 }
