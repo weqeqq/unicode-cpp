@@ -1,0 +1,127 @@
+name: CMake CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          # Windows x86_64
+          - os: windows-latest
+            arch: x64
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+            cmake_args: "-A x64"
+          - os: windows-latest
+            arch: x64
+            compiler: clang
+            generator: "Ninja"
+            env: "CC=clang;CXX=clang++"
+          - os: windows-latest
+            arch: x64
+            compiler: mingw
+            generator: "MinGW Makefiles"
+            env: "PATH=/c/msys64/mingw64/bin:${{ runner.env.PATH }}"
+
+          # Windows x86
+          - os: windows-latest
+            arch: x86
+            compiler: msvc
+            generator: "Visual Studio 17 2022"
+            cmake_args: "-A Win32"
+          - os: windows-latest
+            arch: x86
+            compiler: clang
+            generator: "Ninja"
+            env: "CC=clang;CXX=clang++"
+          - os: windows-latest
+            arch: x86
+            compiler: mingw
+            generator: "MinGW Makefiles"
+            env: "PATH=/c/msys64/mingw32/bin:${{ runner.env.PATH }}"
+
+          # Linux x86_64
+          - os: ubuntu-latest
+            arch: x64
+            compiler: gcc
+            cmake_args: "-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++"
+          - os: ubuntu-latest
+            arch: x64
+            compiler: clang
+            cmake_args: "-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+
+          # Linux x86 (32‑bit)
+          - os: ubuntu-latest
+            arch: x86
+            compiler: gcc
+            cmake_args: "-DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32"
+          - os: ubuntu-latest
+            arch: x86
+            compiler: clang
+            cmake_args: "-DCMAKE_C_FLAGS=-m32 -DCMAKE_CXX_FLAGS=-m32 -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+
+          # Linux aarch64
+          - os: ubuntu-latest
+            arch: aarch64
+            compiler: gcc
+            cmake_args: "-DCMAKE_TOOLCHAIN_FILE=cmake/aarch64-toolchain.cmake"
+          - os: ubuntu-latest
+            arch: aarch64
+            compiler: clang
+            cmake_args: "-DCMAKE_TOOLCHAIN_FILE=cmake/aarch64-toolchain.cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+
+          # macOS x86_64
+          - os: macos-latest
+            arch: x64
+            compiler: clang
+            cmake_args: "-DCMAKE_OSX_ARCHITECTURES=x86_64"
+
+          # macOS aarch64
+          - os: macos-latest
+            arch: arm64
+            compiler: clang
+            cmake_args: "-DCMAKE_OSX_ARCHITECTURES=arm64"
+
+    runs-on: ${{ matrix.os }}
+    env:
+      BUILD_DIR: build-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Setup MSYS2 (Windows, MinGW)
+        if: matrix.compiler == 'mingw'
+        uses: msys2/setup-msys2@v1
+        with:
+          msystem: ${{ matrix.arch == 'x64' && 'MINGW64' || 'MINGW32' }}
+          update: true
+
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake make gcc g++ clang
+
+      - name: Configure CMake
+        run: |
+          mkdir $BUILD_DIR
+          cd $BUILD_DIR
+          cmake .. -G "${{ matrix.generator || 'Unix Makefiles' }}" ${{ matrix.cmake_args || '' }}
+
+      - name: Build
+        run: |
+          cd $BUILD_DIR
+          cmake --build .
+
+      - name: Run tests
+        if: ${{ matrix.generator != 'Visual Studio 17 2022' }} 
+        run: |
+          cd $BUILD_DIR
+          ctest --output-on-failure
+
