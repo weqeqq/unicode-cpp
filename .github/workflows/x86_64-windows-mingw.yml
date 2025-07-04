@@ -1,0 +1,21 @@
+name: x86_64-windows-mingw
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure
+      run: cmake --preset release -G "MinGW Makefiles"
+
+    - name: Build
+      run: cmake --build --preset release
