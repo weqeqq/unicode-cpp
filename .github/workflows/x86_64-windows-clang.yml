@@ -13,13 +13,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install LLVM (Clang)
-        uses: KyleMayes/install-llvm-action@v1
+      - name: Install
+        uses: egor-tensin/setup-clang@v1
         with:
-          version: "19"
+          platform: x64
 
       - name: Configure
-        run: cmake --preset release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DUNICODE_USE_SIMDUTF=OFF -G Ninja
+        run: cmake --preset release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja
 
       - name: Build
         run: cmake --build --preset release
