@@ -14,11 +14,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Install
-      uses: egor-tensin/setup-mingw@v2
-      with:
-        platform: x64
-
     - name: Configure
       run: cmake --preset release -G "MinGW Makefiles"
 
