@@ -13,7 +13,7 @@ if(BUILD_SHARED_LIBS)
 else()
     add_library(unicode STATIC)
 endif()
-target_compile_features(unicode PUBLIC cxx_std_23)
+target_compile_features(unicode PUBLIC cxx_std_17)
 target_sources(unicode PUBLIC
     FILE_SET HEADERS BASE_DIRS
         headers

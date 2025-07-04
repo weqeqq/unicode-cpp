@@ -2,7 +2,6 @@
 #pragma once
 
 #include <stdexcept>
-#include <format>
 
 namespace Unicode {
 
@@ -15,13 +14,13 @@ protected:
     const std::string &prefix,
     const std::string &message
   ) {
-    return std::format("{}::{}", prefix, message);
+    return prefix + "::" + message;
   }
   static std::string Message(
     const std::string &prefix,
     const std::string &message
   ) {
-    return std::format("{}: {}", prefix, message);
+    return prefix + ": " + message;
   }
 }; // class Error
 }; // namespace Unicode

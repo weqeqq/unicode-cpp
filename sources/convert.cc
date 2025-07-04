@@ -1,10 +1,11 @@
 
-#include <cstdint>
 #include <unicode/convert.h>
 #include <unicode/length.h>
 
 #ifdef UNICODE_USE_SIMDUTF
 #include <simdutf.h>
+#else
+#include <cstdint>
 #endif
 
 namespace Unicode {
