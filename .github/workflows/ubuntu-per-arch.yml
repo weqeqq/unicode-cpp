@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [aarch64, armv6, armv7]
+        arch: [armv7, aarch64, riscv64, s390x, ppc64le]
     steps:
       - uses: actions/checkout@v4
       - uses: uraimo/run-on-arch-action@v3
