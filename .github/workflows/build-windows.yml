@@ -1,0 +1,53 @@
+name: Windows CMake Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-msvc:
+    name: Build with MSVC
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure with CMake (MSVC)
+        run: cmake -B build-msvc -S . -G "Visual Studio 17 2022" -A x64
+
+      - name: Build with CMake (MSVC)
+        run: cmake --build build-msvc --config Release
+
+  build-clang:
+    name: Build with Clang (clang-cl)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Clang
+        run: |
+          echo "Using clang-cl from Visual Studio tools"
+
+      - name: Configure with CMake (Clang)
+        run: cmake -B build-clang -S . -G "Visual Studio 17 2022" -T ClangCL -A x64
+
+      - name: Build with CMake (Clang)
+        run: cmake --build build-clang --config Release
+
+  build-mingw:
+    name: Build with MinGW
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MinGW
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+
+      - name: Configure with CMake (MinGW)
+        run: cmake -B build-mingw -S . -G "MinGW Makefiles"
+
+      - name: Build with CMake (MinGW)
+        run: cmake --build build-mingw -- -j
