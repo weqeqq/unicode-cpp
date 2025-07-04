@@ -1,4 +1,4 @@
-name: x86_64-linux-clang
+name: x86_64-macos-clang
 
 on:
   push:
@@ -9,16 +9,11 @@ on:
 jobs:
   build:
     name: "Build"
-    runs-on: "ubuntu-latest"
+    runs-on: "macos-latest"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential clang
 
       - name: Configure
         run: cmake --preset release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
