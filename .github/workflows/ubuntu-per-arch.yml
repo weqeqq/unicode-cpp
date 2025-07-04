@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: uraimo/run-on-arch-action@v3
         name: "Build"
+        id: runcmd
         with:
           arch: ${{ matrix.arch }}
           githubToken: ${{ github.token }}
