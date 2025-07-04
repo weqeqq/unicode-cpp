@@ -14,8 +14,12 @@ struct ConvertError : Error {
 
 template <typename Char>
 StringU8 ToStringU8(const BasicString<Char> &input) {
-  static_assert(false, "Undefined character type");
-
+  static_assert(
+    std::is_same_v<Char, Char8>  ||
+    std::is_same_v<Char, Char16> ||
+    std::is_same_v<Char, Char32>,
+    "Undefined character type"
+  );
   return StringU8();
 }
 template <typename Char>
@@ -33,8 +37,12 @@ StringU8 ToStringU8(const StringU32 &input);
 
 template <typename Char>
 StringU16 ToStringU16(const BasicString<Char> &input) {
-  static_assert(false, "Undefined character type");
-
+  static_assert(
+    std::is_same_v<Char, Char8>  ||
+    std::is_same_v<Char, Char16> ||
+    std::is_same_v<Char, Char32>,
+    "Undefined character type"
+  );
   return StringU16();
 }
 template <typename Char>
@@ -52,8 +60,12 @@ StringU16 ToStringU16(const StringU32 &input);
 
 template <typename Char>
 StringU32 ToStringU32(const BasicString<Char> &input) {
-  static_assert(false, "Undefined character type");
-
+  static_assert(
+    std::is_same_v<Char, Char8>  ||
+    std::is_same_v<Char, Char16> ||
+    std::is_same_v<Char, Char32>,
+    "Undefined character type"
+  );
   return StringU32();
 }
 template <typename Char>

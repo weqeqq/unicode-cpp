@@ -15,8 +15,12 @@ struct LengthError : Error {
 
 template <typename Char>
 std::uint64_t FindLength(const BasicString<Char> &input) {
-  static_assert(false, "Undefined character type");
-
+  static_assert(
+    std::is_same_v<Char, Char8>  ||
+    std::is_same_v<Char, Char16> ||
+    std::is_same_v<Char, Char32>,
+    "Undefined character type"
+  );
   return 0;
 }
 template <>
