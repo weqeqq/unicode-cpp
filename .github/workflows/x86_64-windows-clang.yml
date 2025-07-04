@@ -16,7 +16,7 @@ jobs:
       - name: Install LLVM (Clang)
         uses: KyleMayes/install-llvm-action@v1
         with:
-          version: "17.0"
+          version: "19.0"
 
       - name: Configure
         run: cmake --preset release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DUNICODE_USE_SIMDUTF=OFF -G Ninja
