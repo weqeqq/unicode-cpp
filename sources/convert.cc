@@ -34,7 +34,7 @@ StringU8 ToStringU8(const StringU16 &input) {
   if (!simdutf::convert_utf16_to_utf8(
     input.data(), input.size(), output.data()
   )) {
-    throw ConvertError::FailedToConvert("Invalid UTF-16 string");
+    throw ConvertError("Invalid UTF-16 string");
   }
   return output;
 }
@@ -49,7 +49,7 @@ StringU8 ToStringU8(const StringU32 &input) {
   if (!simdutf::convert_utf32_to_utf8(
     input.data(), input.size(), output.data()
   )) {
-    throw ConvertError::FailedToConvert("Invalid UTF-32 string");
+    throw ConvertError("Invalid UTF-32 string");
   }
   return output;
 }
@@ -64,7 +64,7 @@ StringU16 ToStringU16(const StringU8 &input) {
   if (!simdutf::convert_utf8_to_utf16(
     input.data(), input.size(), output.data()
   )) {
-    throw ConvertError::FailedToConvert("Invalid UTF-8 string");
+    throw ConvertError("Invalid UTF-8 string");
   }
   return output;
 }
@@ -79,7 +79,7 @@ StringU16 ToStringU16(const StringU32 &input) {
   if (!simdutf::convert_utf32_to_utf16(
     input.data(), input.size(), output.data()
   )) {
-    throw ConvertError::FailedToConvert("Invalid UTF-32 string");
+    throw ConvertError("Invalid UTF-32 string");
   }
   return output;
 }
@@ -94,7 +94,7 @@ StringU32 ToStringU32(const StringU8 &input) {
   if (!simdutf::convert_utf8_to_utf32(
     input.data(), input.size(), output.data()
   )) {
-    throw ConvertError::FailedToConvert("Invalid UTF-8 string");
+    throw ConvertError("Invalid UTF-8 string");
   }
   return output;
 }
@@ -109,11 +109,11 @@ StringU32 ToStringU32(const StringU16 &input) {
   if (!simdutf::convert_utf16_to_utf32(
     input.data(), input.size(), output.data()
   )) {
-    throw ConvertError::FailedToConvert("Invalid UTF-16 string");
+    throw ConvertError("Invalid UTF-16 string");
   }
   return output;
 }
-#else 
+#else
 
 template <typename Char>
 inline auto CharToU(Char input) {
@@ -139,7 +139,7 @@ static StringU32 DecodeStringU8(const StringU8 &input) {
   for (auto &character : output) {
     if (CharToU(*iterator) < 0x80) {
       character = *iterator++;
-      
+
     } else if ((CharToU(*iterator) & 0xE0) == 0xC0) {
       character  = (*iterator++ & 0x1F) << 6;
       character |= (*iterator++ & 0x3F);
@@ -156,7 +156,7 @@ static StringU32 DecodeStringU8(const StringU8 &input) {
       character |= (*iterator++ & 0x3F);
 
     } else {
-      throw ConvertError::FailedToConvert("Invalid UTF-8 string");
+      throw ConvertError("Invalid UTF-8 string");
     }
   }
   return output;
@@ -174,7 +174,7 @@ static StringU32 DecodeStringU16(const StringU16 &input) {
       if (low >= 0xDC00 && low <= 0xDFFF) {
         character = ((high - 0xD800) << 10) + (low - 0xDC00) + 0x10000;
       } else {
-        throw ConvertError::FailedToConvert("Invalid UTF-16 string");
+        throw ConvertError("Invalid UTF-16 string");
       }
     } else {
       character = CharToU(*iterator++);
@@ -195,7 +195,7 @@ static std::uint64_t StringU8ByteCount(const StringU32 &input) {
     } else if (CharToU(character) <= 0x10FFFF) {
       output += 4;
     } else {
-      throw ConvertError::FailedToConvert("Invalid UTF-32 string");
+      throw ConvertError("Invalid UTF-32 string");
     }
   }
   return output;
@@ -225,7 +225,7 @@ static StringU8 EncodeStringU8(const StringU32 &input) {
       *iterator++ = 0x80 | (character & 0x3F);
 
     } else {
-      throw ConvertError::FailedToConvert("Invalid UTF-32 string");
+      throw ConvertError("Invalid UTF-32 string");
     }
   }
   return output;
@@ -238,7 +238,7 @@ static std::uint64_t StringU16ByteCount(const StringU32 &input) {
       output++;
 
     } else if (CharToU(character) > 0x10FFFF) {
-      throw ConvertError::FailedToConvert("Invalid UTF-32 string");
+      throw ConvertError("Invalid UTF-32 string");
     }
     output++;
   }
@@ -256,14 +256,14 @@ static StringU16 EncodeStringU16(const StringU32 &input) {
     } else if (CharToU(character) <= 0x10FFFF) {
       *iterator++ = ((character - 0x10000) >> 10) + 0xD800;
       *iterator++ = ((character - 0x10000) & 0x3FF) + 0xDC00;
-        
+
     } else {
-      throw ConvertError::FailedToConvert("Invalid UTF-32 string");
+      throw ConvertError("Invalid UTF-32 string");
     }
   }
   return output;
 }
-template <> 
+template <>
 StringU8 ToStringU8(const StringU16 &input) {
   return EncodeStringU8(DecodeStringU16(input));
 }
@@ -289,4 +289,3 @@ StringU32 ToStringU32(const StringU16 &input) {
 }
 #endif // UNICODE_USE_SIMDUTF
 }
-

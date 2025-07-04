@@ -1,5 +1,5 @@
 
-#pragma once 
+#pragma once
 
 #include <cstdint>
 #include <unicode/type.h>
@@ -7,16 +7,11 @@
 #include <unicode/error.h>
 
 namespace Unicode {
-
-EXCEPTION_DEFINE_NAMESPACE(
-  LengthError, 
-  EXCEPTION_ROOT,
-  EXCEPTION_MESSAGE(FailedToFindLength);
-);
-EXCEPTION_DEFINE_MESSAGE(
-  FailedToFindLength, 
-  LengthError
-);
+//
+struct LengthError : Error {
+  LengthError(const std::string &message)
+    : Error(Message("LengthError", message)) {}
+};
 
 template <typename Char>
 std::uint64_t FindLength(const BasicString<Char> &input) {

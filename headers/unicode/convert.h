@@ -1,20 +1,17 @@
 
-#pragma once 
+#pragma once
 
 #include <unicode/type.h>
 #include <unicode/error.h>
 
 namespace Unicode {
+//
 
-EXCEPTION_DEFINE_NAMESPACE(
-  ConvertError, 
-  EXCEPTION_ROOT,
-  EXCEPTION_MESSAGE(FailedToConvert);
-);
-EXCEPTION_DEFINE_MESSAGE(
-  FailedToConvert, 
-  ConvertError
-);
+struct ConvertError : Error {
+  ConvertError(const std::string &message)
+    : Error(Message("ConvertError", message)) {}
+};
+
 template <typename Char>
 StringU8 ToStringU8(const BasicString<Char> &input) {
   static_assert(false, "Undefined character type");

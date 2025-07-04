@@ -1,5 +1,5 @@
 
-#pragma once 
+#pragma once
 
 #include <string>
 
@@ -16,5 +16,4 @@ using StringU8  = BasicString<Char8>;
 using StringU16 = BasicString<Char16>;
 using StringU32 = BasicString<Char32>;
 
-}
-
+}; // namespace Unicode
