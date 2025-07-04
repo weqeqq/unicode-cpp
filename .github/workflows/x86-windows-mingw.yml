@@ -1,0 +1,26 @@
+name: x86-windows-mingw.yml
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-x86:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        platform: x86
+
+    - name: Configure
+      run: cmake --preset release -G "MinGW Makefiles"
+
+    - name: Build
+      run: cmake --build --preset release
